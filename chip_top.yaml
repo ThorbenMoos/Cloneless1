@@ -1,0 +1,889 @@
+meta:
+  version: 3
+  flow: Chip
+  substituting_steps:
+
+    # Disable KLayout DRC
+    KLayout.DRC: null
+    Checker.KLayoutDRC: null
+
+    # Disable KLayout antenna check
+    KLayout.Antenna: null
+    Checker.KLayoutAntenna: null
+
+    # Disable KLayout density check
+    KLayout.Density: null
+    Checker.KLayoutDensity: null
+
+    # Save time during development
+    # Enable for sign-off
+    OpenROAD.IRDropReport: null
+    Magic.DRC: null
+    Checker.MagicDRC: null
+    KLayout.XOR: null
+    Netgen.LVS: null
+    Checker.LVS: null
+
+DESIGN_NAME: chip_top
+VERILOG_FILES:
+- dir::chip_top.sv
+- dir::Cloneless.v
+
+# Enable plugin for better SystemVerilog support
+# USE_SLANG: True
+# SLANG_ARGUMENTS: ['--keep-hierarchy']
+
+# Slightly smaller file sizes
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+# SDC files
+PNR_SDC_FILE: dir::chip_top.sdc
+SIGNOFF_SDC_FILE: dir::chip_top.sdc
+FALLBACK_SDC: dir::chip_top.sdc
+
+# Power / ground nets
+VDD_NETS:
+- VDD
+GND_NETS:
+- VSS
+VERILOG_POWER_DEFINE: "USE_POWER_PINS"
+
+# We need to add gf180mcu_fd_io__bi_24t
+# due to the unused Y output for output only pads
+IGNORE_DISCONNECTED_MODULES:
+- gf180mcu_fd_io__bi_24t
+- gf180mcu_ws_ip__id
+- gf180mcu_ws_ip__logo
+
+# Clock
+CLOCK_PORT: clk_PAD
+CLOCK_NET: clk_pad/Y
+CLOCK_PERIOD: 250 # 4 MHz
+
+# Fix hold violations
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.4
+PL_RESIZER_ALLOW_SETUP_VIOS: True
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.35
+
+# Increase for more logic
+# on your die
+PL_TARGET_DENSITY_PCT: 60
+GRT_ALLOW_CONGESTION: true
+
+# Fix antenna violations after DRT
+DRT_ANTENNA_REPAIR_ITERS: 10
+DRT_ANTENNA_MARGIN: 10 # %
+
+# PDN - Straps
+PDN_VWIDTH: 5
+PDN_HWIDTH: 5
+PDN_VSPACING: 1
+PDN_HSPACING: 1
+PDN_VPITCH: 75
+PDN_HPITCH: 75
+
+# PDN - Core ring
+PDN_CORE_RING: True
+# Maximum metal width without slotting: 30um
+PDN_CORE_RING_VWIDTH: 25
+PDN_CORE_RING_HWIDTH: 25
+PDN_CORE_RING_CONNECT_TO_PADS: True
+PDN_ENABLE_PINS: False
+PDN_CORE_VERTICAL_LAYER: Metal2
+PDN_CORE_HORIZONTAL_LAYER: Metal3
+
+# Due to OpenROAD bug
+# https://github.com/The-OpenROAD-Project/OpenROAD/issues/8229
+#PL_TIME_DRIVEN: False
+#PL_ROUTABILITY_DRIVEN: False
+
+# Do not error on magic DRC violations
+# Note: Passing magic DRC is not required for the submission.
+# However, it is recommended to fix or carefully review all violations.
+ERROR_ON_MAGIC_DRC: False
+
+# Prevent false positive DRC errors in I/O cells
+MAGIC_GDS_FLATGLOB:
+# For contacts
+- "*_CDNS_*"
+# Foundry provided SRAMs
+- "*$$*"
+- "M1_N*"
+- "M1_P*"
+- "M2_M1*"
+- "M3_M2*"
+- "nmos_5p0*"
+- "nmos_1p2*"
+- "pmos_5p0*"
+- "pmos_1p2*"
+- "via1_*"
+- "ypass_gate*"
+- "G_ring_*"
+# These additional cells must be flattened to get rid of 3.3V devices
+# (DUALGATE drawn into high-level cells)
+- "dcap_103*"
+- "din_*"
+- "mux821_*"
+- "rdummy_*"
+- "pmoscap_*"
+- "xdec_*"
+- "ypredec*"
+- "xpredec*"
+- "prexdec_*"
+- "xdec8_*"
+- "xdec16_*"
+- "xdec32_*"
+- "sa_*"
+
+# Floorplanning
+FP_SIZING: absolute
+# 3880umx5070um including 26um
+# for the sealring on all sides
+DIE_AREA: [0, 0, 3932, 5122]
+CORE_AREA: [442, 442, 3490, 4680]
+
+# Specify the pad instances for the padring
+PAD_SOUTH: [
+    clk_pad,
+    
+    "dvdd_pads\\[0\\].pad",
+    "dvss_pads\\[0\\].pad",
+    
+    rst_pad,
+    read_pad, 
+    
+    "dvdd_pads\\[1\\].pad",
+    "dvss_pads\\[1\\].pad",
+    
+    write_pad
+]
+
+PAD_EAST: [
+    "data_in\\[0\\].pad", 
+    
+    "dvdd_pads\\[2\\].pad",
+    "dvss_pads\\[2\\].pad",
+    
+    "data_in\\[1\\].pad", 
+    "data_in\\[2\\].pad", 
+    
+    "dvdd_pads\\[3\\].pad",
+    "dvss_pads\\[3\\].pad",
+    
+    "data_in\\[3\\].pad"
+]
+
+PAD_NORTH: [
+    "dvss_pads\\[4\\].pad",
+    
+    "dvss_pads\\[5\\].pad",
+    "dvdd_pads\\[4\\].pad",
+    
+    "address\\[2\\].pad", 
+    "address\\[1\\].pad", 
+    
+    "dvss_pads\\[6\\].pad",
+    "dvdd_pads\\[5\\].pad",
+    
+    "address\\[0\\].pad"
+]
+
+PAD_WEST: [
+    "data_out\\[3\\].pad",
+    
+    "dvss_pads\\[7\\].pad",
+    "dvdd_pads\\[6\\].pad",
+
+    "data_out\\[2\\].pad",
+    "data_out\\[1\\].pad",
+    
+    "dvss_pads\\[8\\].pad",
+    "dvdd_pads\\[7\\].pad",
+    
+    "data_out\\[0\\].pad"
+]
+
+# Since we cannot meet the minimum density limit on Metal2,
+# ignore active metal on previous and subsequent layers
+# (DM.5_DM.7 and DM.4_DM.6). Dummy metal is moved to active
+# metal during the precheck.
+KLAYOUT_FILLER_OPTIONS:
+  Metal2_ignore_active: true
+
+# Because we have multiple power pads for one power domain
+MAGIC_EXT_UNIQUE: notopports
+
+MACROS:
+  gf180mcu_ws_ip__id:
+    gds:
+      - dir::macros/gf180mcu_ws_ip__id/gds/gf180mcu_ws_ip__id.gds
+    lef:
+      - dir::macros/gf180mcu_ws_ip__id/lef/gf180mcu_ws_ip__id.lef
+    vh:
+      - dir::macros/gf180mcu_ws_ip__id/vh/gf180mcu_ws_ip__id.v
+    lib:
+      "*":
+        - dir::macros/gf180mcu_ws_ip__id/lib/gf180mcu_ws_ip__id.lib
+    instances:
+      chip_id:
+        location: [26, 26]
+        orientation: N
+
+  gf180mcu_ws_ip__logo:
+    gds:
+      - dir::macros/gf180mcu_ws_ip__logo/gds/gf180mcu_ws_ip__logo.gds
+    lef:
+      - dir::macros/gf180mcu_ws_ip__logo/lef/gf180mcu_ws_ip__logo.lef
+    vh:
+      - dir::macros/gf180mcu_ws_ip__logo/vh/gf180mcu_ws_ip__logo.v
+    lib:
+      "*":
+        - dir::macros/gf180mcu_ws_ip__logo/lib/gf180mcu_ws_ip__logo.lib
+    instances:
+      wafer_space_logo:
+        location: ["expr::$DIE_AREA[2] + -169.25", "expr::$DIE_AREA[3] + -169.25"]
+        orientation: N
+
+  carry4:
+    gds:
+      - dir::macros/carry4/runs/RUN_*/final/gds/carry4.gds
+    lef:
+      - dir::macros/carry4/runs/RUN_*/final/lef/carry4.lef
+    pnl:
+      - dir::macros/carry4/runs/RUN_*/final/pnl/carry4.pnl.v
+    nl:
+      - dir::macros/carry4/runs/RUN_*/final/nl/carry4.nl.v
+    spef:
+      "min_*":
+        - dir::macros/carry4/runs/RUN_*/final/spef/min/carry4.min.spef
+      "nom_*":
+        - dir::macros/carry4/runs/RUN_*/final/spef/nom/carry4.nom.spef
+      "max_*":
+        - dir::macros/carry4/runs/RUN_*/final/spef/max/carry4.max.spef
+    lib:
+      "min_ss_125C_4v50":
+        - dir::macros/carry4/runs/RUN_*/final/lib/min_ss_125C_4v50/carry4__min_ss_125C_4v50.lib
+      "min_tt_025C_5v00":
+        - dir::macros/carry4/runs/RUN_*/final/lib/min_tt_025C_5v00/carry4__min_tt_025C_5v00.lib
+      "min_ff_n40C_5v50":
+        - dir::macros/carry4/runs/RUN_*/final/lib/min_ff_n40C_5v50/carry4__min_ff_n40C_5v50.lib
+      "nom_ss_125C_4v50":
+        - dir::macros/carry4/runs/RUN_*/final/lib/nom_ss_125C_4v50/carry4__nom_ss_125C_4v50.lib
+      "nom_tt_025C_5v00":
+        - dir::macros/carry4/runs/RUN_*/final/lib/nom_tt_025C_5v00/carry4__nom_tt_025C_5v00.lib
+      "nom_ff_n40C_5v50":
+        - dir::macros/carry4/runs/RUN_*/final/lib/nom_ff_n40C_5v50/carry4__nom_ff_n40C_5v50.lib
+      "max_ss_125C_4v50":
+        - dir::macros/carry4/runs/RUN_*/final/lib/max_ss_125C_4v50/carry4__max_ss_125C_4v50.lib
+      "max_tt_025C_5v00":
+        - dir::macros/carry4/runs/RUN_*/final/lib/max_tt_025C_5v00/carry4__max_tt_025C_5v00.lib
+      "max_ff_n40C_5v50":
+        - dir::macros/carry4/runs/RUN_*/final/lib/max_ff_n40C_5v50/carry4__max_ff_n40C_5v50.lib
+    instances:
+      toplevel.estrng1.trng_inst.tdc.carry4_inst:
+        location: ["expr::510+75*2", "expr::510+75*16"]
+        orientation: N
+      toplevel.estrng2.trng_inst.tdc.carry4_inst:
+        location: ["expr::510+75*2", "expr::510+75*20"]
+        orientation: N
+      toplevel.estrng3.trng_inst.tdc.carry4_inst:
+        location: ["expr::510+75*2", "expr::510+75*24"]
+        orientation: N
+      toplevel.estrng4.trng_inst.tdc.carry4_inst:
+        location: ["expr::510+75*2", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.estrng1.trng_inst.tdc.carry4_inst:
+        location: ["expr::510+75*2", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.estrng2.trng_inst.tdc.carry4_inst:
+        location: ["expr::510+75*2", "expr::510+75*36"]
+        orientation: N
+
+  ringoscillator_23:
+    gds:
+      - dir::macros/ringoscillator_23/runs/RUN_*/final/gds/ringoscillator_23.gds
+    lef:
+      - dir::macros/ringoscillator_23/runs/RUN_*/final/lef/ringoscillator_23.lef
+    pnl:
+      - dir::macros/ringoscillator_23/runs/RUN_*/final/pnl/ringoscillator_23.pnl.v
+    nl:
+      - dir::macros/ringoscillator_23/runs/RUN_*/final/nl/ringoscillator_23.nl.v
+    spef:
+      "min_*":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/spef/min/ringoscillator_23.min.spef
+      "nom_*":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/spef/nom/ringoscillator_23.nom.spef
+      "max_*":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/spef/max/ringoscillator_23.max.spef
+    lib:
+      "min_ss_125C_4v50":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/min_ss_125C_4v50/ringoscillator_23__min_ss_125C_4v50.lib
+      "min_tt_025C_5v00":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/min_tt_025C_5v00/ringoscillator_23__min_tt_025C_5v00.lib
+      "min_ff_n40C_5v50":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/min_ff_n40C_5v50/ringoscillator_23__min_ff_n40C_5v50.lib
+      "nom_ss_125C_4v50":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/nom_ss_125C_4v50/ringoscillator_23__nom_ss_125C_4v50.lib
+      "nom_tt_025C_5v00":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/nom_tt_025C_5v00/ringoscillator_23__nom_tt_025C_5v00.lib
+      "nom_ff_n40C_5v50":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/nom_ff_n40C_5v50/ringoscillator_23__nom_ff_n40C_5v50.lib
+      "max_ss_125C_4v50":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/max_ss_125C_4v50/ringoscillator_23__max_ss_125C_4v50.lib
+      "max_tt_025C_5v00":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/max_tt_025C_5v00/ringoscillator_23__max_tt_025C_5v00.lib
+      "max_ff_n40C_5v50":
+        - dir::macros/ringoscillator_23/runs/RUN_*/final/lib/max_ff_n40C_5v50/ringoscillator_23__max_ff_n40C_5v50.lib
+    instances:
+      toplevel.estrng1.trng_inst.ro1:
+        location: ["expr::510+75*2", "expr::510+75*17"]
+        orientation: N
+      toplevel.estrng2.trng_inst.ro1:
+        location: ["expr::510+75*2", "expr::510+75*21"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.estrng1.trng_inst.ro1:
+        location: ["expr::510+75*2", "expr::510+75*33"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.estrng2.trng_inst.ro1:
+        location: ["expr::510+75*2", "expr::510+75*37"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*9"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*11"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*13"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*15"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*9"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*11"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*13"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n1_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*15"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*9"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*11"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*13"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*15"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*9"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*11"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*13"]
+        orientation: N
+      toplevel.ropuf1.ser_cells_n2_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*15"]
+        orientation: N
+
+  ringoscillator_31:
+    gds:
+      - dir::macros/ringoscillator_31/runs/RUN_*/final/gds/ringoscillator_31.gds
+    lef:
+      - dir::macros/ringoscillator_31/runs/RUN_*/final/lef/ringoscillator_31.lef
+    pnl:
+      - dir::macros/ringoscillator_31/runs/RUN_*/final/pnl/ringoscillator_31.pnl.v
+    nl:
+      - dir::macros/ringoscillator_31/runs/RUN_*/final/nl/ringoscillator_31.nl.v
+    spef:
+      "min_*":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/spef/min/ringoscillator_31.min.spef
+      "nom_*":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/spef/nom/ringoscillator_31.nom.spef
+      "max_*":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/spef/max/ringoscillator_31.max.spef
+    lib:
+      "min_ss_125C_4v50":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/min_ss_125C_4v50/ringoscillator_31__min_ss_125C_4v50.lib
+      "min_tt_025C_5v00":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/min_tt_025C_5v00/ringoscillator_31__min_tt_025C_5v00.lib
+      "min_ff_n40C_5v50":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/min_ff_n40C_5v50/ringoscillator_31__min_ff_n40C_5v50.lib
+      "nom_ss_125C_4v50":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/nom_ss_125C_4v50/ringoscillator_31__nom_ss_125C_4v50.lib
+      "nom_tt_025C_5v00":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/nom_tt_025C_5v00/ringoscillator_31__nom_tt_025C_5v00.lib
+      "nom_ff_n40C_5v50":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/nom_ff_n40C_5v50/ringoscillator_31__nom_ff_n40C_5v50.lib
+      "max_ss_125C_4v50":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/max_ss_125C_4v50/ringoscillator_31__max_ss_125C_4v50.lib
+      "max_tt_025C_5v00":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/max_tt_025C_5v00/ringoscillator_31__max_tt_025C_5v00.lib
+      "max_ff_n40C_5v50":
+        - dir::macros/ringoscillator_31/runs/RUN_*/final/lib/max_ff_n40C_5v50/ringoscillator_31__max_ff_n40C_5v50.lib
+    instances:
+      toplevel.estrng1.trng_inst.ro2:
+        location: ["expr::510+75*3", "expr::510+75*16"]
+        orientation: N
+      toplevel.estrng3.trng_inst.ro1:
+        location: ["expr::510+75*2", "expr::510+75*25"]
+        orientation: N
+      toplevel.estrng4.trng_inst.ro1:
+        location: ["expr::510+75*2", "expr::510+75*29"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*19"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*21"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*23"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*25"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*19"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*21"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*23"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n1_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*25"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*19"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*21"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*23"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*25"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*19"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*21"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*23"]
+        orientation: N
+      toplevel.ropuf2.ser_cells_n2_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*25"]
+        orientation: N
+
+  ringoscillator_47:
+    gds:
+      - dir::macros/ringoscillator_47/runs/RUN_*/final/gds/ringoscillator_47.gds
+    lef:
+      - dir::macros/ringoscillator_47/runs/RUN_*/final/lef/ringoscillator_47.lef
+    pnl:
+      - dir::macros/ringoscillator_47/runs/RUN_*/final/pnl/ringoscillator_47.pnl.v
+    nl:
+      - dir::macros/ringoscillator_47/runs/RUN_*/final/nl/ringoscillator_47.nl.v
+    spef:
+      "min_*":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/spef/min/ringoscillator_47.min.spef
+      "nom_*":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/spef/nom/ringoscillator_47.nom.spef
+      "max_*":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/spef/max/ringoscillator_47.max.spef
+    lib:
+      "min_ss_125C_4v50":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/min_ss_125C_4v50/ringoscillator_47__min_ss_125C_4v50.lib
+      "min_tt_025C_5v00":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/min_tt_025C_5v00/ringoscillator_47__min_tt_025C_5v00.lib
+      "min_ff_n40C_5v50":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/min_ff_n40C_5v50/ringoscillator_47__min_ff_n40C_5v50.lib
+      "nom_ss_125C_4v50":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/nom_ss_125C_4v50/ringoscillator_47__nom_ss_125C_4v50.lib
+      "nom_tt_025C_5v00":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/nom_tt_025C_5v00/ringoscillator_47__nom_tt_025C_5v00.lib
+      "nom_ff_n40C_5v50":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/nom_ff_n40C_5v50/ringoscillator_47__nom_ff_n40C_5v50.lib
+      "max_ss_125C_4v50":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/max_ss_125C_4v50/ringoscillator_47__max_ss_125C_4v50.lib
+      "max_tt_025C_5v00":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/max_tt_025C_5v00/ringoscillator_47__max_tt_025C_5v00.lib
+      "max_ff_n40C_5v50":
+        - dir::macros/ringoscillator_47/runs/RUN_*/final/lib/max_ff_n40C_5v50/ringoscillator_47__max_ff_n40C_5v50.lib
+    instances:
+      toplevel.estrng2.trng_inst.ro2:
+        location: ["expr::510+75*3", "expr::510+75*20"]
+        orientation: N
+      toplevel.estrng3.trng_inst.ro2:
+        location: ["expr::510+75*3", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.estrng1.trng_inst.ro2:
+        location: ["expr::510+75*3", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.estrng2.trng_inst.ro2:
+        location: ["expr::510+75*3", "expr::510+75*36"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*20", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*20", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*20", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*20", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*20", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*20", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*20", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n1_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*20", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*22", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*22", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*22", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*22", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*22", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*22", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*22", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n2_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*22", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*24", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*24", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*24", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*24", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*24", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*24", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*24", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n3_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*24", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*26", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*26", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*26", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*26", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*26", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*26", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*26", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf1.ser_cells_n4_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*26", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*28", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*28", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*28", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*28", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*28", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*28", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*28", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n1_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*28", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*30", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*30", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*30", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*30", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*30", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*30", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*30", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n2_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*30", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*32", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*32", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*32", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*32", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*32", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*32", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*32", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n3_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*32", "expr::510+75*34"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*34", "expr::510+75*20"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*34", "expr::510+75*22"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*34", "expr::510+75*24"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*34", "expr::510+75*26"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*34", "expr::510+75*28"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*34", "expr::510+75*30"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*34", "expr::510+75*32"]
+        orientation: N
+      toplevel.mps_d2_ipm_r2_controller.ropuf2.ser_cells_n4_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*34", "expr::510+75*34"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*29"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*31"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*33"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*35"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*29"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*31"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*33"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n1_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*34"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*29"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*31"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*33"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*35"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*29"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*31"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*33"]
+        orientation: N
+      toplevel.ropuf3.ser_cells_n2_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*35"]
+        orientation: N
+
+  ringoscillator_59:
+    gds:
+      - dir::macros/ringoscillator_59/runs/RUN_*/final/gds/ringoscillator_59.gds
+    lef:
+      - dir::macros/ringoscillator_59/runs/RUN_*/final/lef/ringoscillator_59.lef
+    pnl:
+      - dir::macros/ringoscillator_59/runs/RUN_*/final/pnl/ringoscillator_59.pnl.v
+    nl:
+      - dir::macros/ringoscillator_59/runs/RUN_*/final/nl/ringoscillator_59.nl.v
+    spef:
+      "min_*":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/spef/min/ringoscillator_59.min.spef
+      "nom_*":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/spef/nom/ringoscillator_59.nom.spef
+      "max_*":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/spef/max/ringoscillator_59.max.spef
+    lib:
+      "min_ss_125C_4v50":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/min_ss_125C_4v50/ringoscillator_59__min_ss_125C_4v50.lib
+      "min_tt_025C_5v00":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/min_tt_025C_5v00/ringoscillator_59__min_tt_025C_5v00.lib
+      "min_ff_n40C_5v50":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/min_ff_n40C_5v50/ringoscillator_59__min_ff_n40C_5v50.lib
+      "nom_ss_125C_4v50":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/nom_ss_125C_4v50/ringoscillator_59__nom_ss_125C_4v50.lib
+      "nom_tt_025C_5v00":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/nom_tt_025C_5v00/ringoscillator_59__nom_tt_025C_5v00.lib
+      "nom_ff_n40C_5v50":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/nom_ff_n40C_5v50/ringoscillator_59__nom_ff_n40C_5v50.lib
+      "max_ss_125C_4v50":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/max_ss_125C_4v50/ringoscillator_59__max_ss_125C_4v50.lib
+      "max_tt_025C_5v00":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/max_tt_025C_5v00/ringoscillator_59__max_tt_025C_5v00.lib
+      "max_ff_n40C_5v50":
+        - dir::macros/ringoscillator_59/runs/RUN_*/final/lib/max_ff_n40C_5v50/ringoscillator_59__max_ff_n40C_5v50.lib
+    instances:
+      toplevel.estrng4.trng_inst.ro2:
+        location: ["expr::510+75*3", "expr::510+75*28"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*39"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*41"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*10", "expr::510+75*43"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*10", "expr::510+75*45"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*39"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*41"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*12", "expr::510+75*43"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n1_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*12", "expr::510+75*45"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n1_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*39"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n1_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*41"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n2_cell.rocnt1.ro:
+        location: ["expr::510+75*14", "expr::510+75*43"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n2_cell.rocnt2.ro:
+        location: ["expr::510+75*14", "expr::510+75*45"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n3_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*39"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n3_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*41"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n4_cell.rocnt1.ro:
+        location: ["expr::510+75*16", "expr::510+75*43"]
+        orientation: N
+      toplevel.ropuf4.ser_cells_n2_par_cells_n4_cell.rocnt2.ro:
+        location: ["expr::510+75*16", "expr::510+75*45"]
+        orientation: N
+
+# Halo size around macros while cutting rows.
+# Workaround for: https://github.com/The-OpenROAD-Project/OpenROAD/issues/8868
+FP_MACRO_HORIZONTAL_HALO: 5
+FP_MACRO_VERTICAL_HALO: 5
+FP_PDN_HORIZONTAL_HALO: 5
+FP_PDN_VERTICAL_HALO: 5
+
+PDN_CFG: dir::pdn_cfg.tcl
+
+# Make sure netgen doesn't create 'no_connect' nets
+# Not needed since netgen 1.5.303
+LVS_FLATTEN_CELLS:
+- gf180mcu_ws_ip__id
+- gf180mcu_ws_ip__logo
+
+# gf180mcu_ws_ip__id/logo has no ports and components
+# therefore make it an abstract cell in the layout
+MAGIC_EXT_ABSTRACT_CELLS:
+- gf180mcu_ws_ip__id
+- gf180mcu_ws_ip__logo

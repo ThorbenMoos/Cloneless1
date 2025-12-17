@@ -1,0 +1,21 @@
+meta:
+  version: 3
+  flow: Classic
+
+DESIGN_NAME: ringoscillator_23
+VERILOG_FILES:
+- dir::../../Cloneless.v
+
+FP_PDN_MULTILAYER: FALSE
+FP_IO_HLAYER: Metal3
+FP_IO_VLAYER: Metal4
+RT_MAX_LAYER: Metal4
+FP_CORE_UTIL: 45
+
+VDD_NETS:
+- VDD
+GND_NETS:
+- VSS
+
+VERILOG_POWER_DEFINE: "USE_POWER_PINS"
+DIODE_ON_PORTS: both
