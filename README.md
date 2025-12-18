@@ -17,7 +17,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 "
 ```
 
-Once these steps are completed, a new terminal needs to be opened and ```nix-shell``` can be called in the main directory of this repository. Inside the shell simply call ```make``` and wait for the results (using a machine with at least 32 GB memory recommended). The Makefile verifies testbenches, converts the sources, clones the PDK and executes the librelane flow, first to pre-harden some macros and then to implement the overall chip design. With the provided configuration, the overall runtime will be more than 6 hours on most machines. The GDS is usually ready after 3-4 hours (the remaining time is for sign-off steps).
+Once these steps are completed, a new terminal needs to be opened and ```nix-shell``` can be called in the main directory of this repository. Inside the shell simply call ```make``` and wait for the results (using a machine with at least 32 GB memory recommended). The Makefile verifies testbenches, converts the sources, clones the PDK and executes the librelane flow, first to pre-harden some macros and then to implement the overall chip design. With the provided configuration, the overall runtime will be more than 7 hours on most machines. The GDS is usually ready after 3-4 hours (the remaining time is for sign-off steps).
 
 ## RTL Design
 The RTL design is fully written in VHDL (my preferred hardware description language), all sources are located in the `src` folder. Many high-level modules make use of generics to keep the designs parametrizable beyond their concrete instantiation in this project. Conversion from VHDL to Verilog for compatibility with the EDA tool is performed with ghdl.
