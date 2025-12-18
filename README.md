@@ -34,14 +34,14 @@ The Cloneless1 design implements and/or leverages the following scientific resul
 
 The mid-pSquare implementation uses two share and two redundancy domains. Raw outputs of some exemplary TRNG and PUF designs with different parametrization are accessible via the framework. Error-corrected TRNG and PUF outputs used for key and randomness generation of the block cipher are not accessible via the interface.
 
-[1]: https://doi.org/10.46586/tches.v2025.i4.486-519, https://github.com/uclcrypto/mid-pSquare
-[2]: https://doi.org/10.1007/978-3-031-58734-4_7, https://github.com/uclcrypto/small-pSquare
-[3]: https://doi.org/10.1007/978-3-031-30634-1_20
-[4]: https://doi.org/10.46586/tches.v2024.i4.690-736
-[5]: https://eprint.iacr.org/2025/337
-[6]: https://doi.org/10.13154/tches.v2018.i3.267-292
-[7]: https://doi.org/10.1007/11836810_13
-[8]: https://doi.org/10.62056/akdkp2fgx, https://github.com/uclcrypto/randomness_for_hardware_masking
+[1]: https://doi.org/10.46586/tches.v2025.i4.486-519, https://github.com/uclcrypto/mid-pSquare<\br>
+[2]: https://doi.org/10.1007/978-3-031-58734-4_7, https://github.com/uclcrypto/small-pSquare<\br>
+[3]: https://doi.org/10.1007/978-3-031-30634-1_20<\br>
+[4]: https://doi.org/10.46586/tches.v2024.i4.690-736<\br>
+[5]: https://eprint.iacr.org/2025/337<\br>
+[6]: https://doi.org/10.13154/tches.v2018.i3.267-292<\br>
+[7]: https://doi.org/10.1007/11836810_13<\br>
+[8]: https://doi.org/10.62056/akdkp2fgx, https://github.com/uclcrypto/randomness_for_hardware_masking<\br>
 [9]: https://doi.org/10.1145/1278480.1278484
 
 ## Disclaimer
