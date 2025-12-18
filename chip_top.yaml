@@ -4,25 +4,25 @@ meta:
   substituting_steps:
 
     # Disable KLayout DRC
-    KLayout.DRC: null
-    Checker.KLayoutDRC: null
+    #KLayout.DRC: null
+    #Checker.KLayoutDRC: null
 
     # Disable KLayout antenna check
     KLayout.Antenna: null
     Checker.KLayoutAntenna: null
 
     # Disable KLayout density check
-    KLayout.Density: null
-    Checker.KLayoutDensity: null
+    #KLayout.Density: null
+    #Checker.KLayoutDensity: null
 
     # Save time during development
     # Enable for sign-off
-    OpenROAD.IRDropReport: null
-    Magic.DRC: null
-    Checker.MagicDRC: null
-    KLayout.XOR: null
-    Netgen.LVS: null
-    Checker.LVS: null
+    #OpenROAD.IRDropReport: null
+    #Magic.DRC: null
+    #Checker.MagicDRC: null
+    #KLayout.XOR: null
+    #Netgen.LVS: null
+    #Checker.LVS: null
 
 DESIGN_NAME: chip_top
 VERILOG_FILES:
