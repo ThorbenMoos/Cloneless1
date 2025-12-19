@@ -1,7 +1,7 @@
 # Cloneless1
 Cloneless1 is the first in a series of planned tamper-resistant cryptographic open-source silicon designs. It uses GlobalFoundries' 180nm open-source PDK [GF180MCU](https://gf180mcu-pdk.readthedocs.io/en/latest), the [wafer.space](https://wafer.space) [project template](https://github.com/wafer-space/gf180mcu-project-template) and has been submitted to the MPW shuttle [wafer.space GF180MCU Run 1](https://www.crowdsupply.com/wafer-space/gf180mcu-run-1) for fabrication. The Cloneless1 ASIC has been designed using the [librelane](https://librelane.readthedocs.io/en/latest) EDA tool flow and can be fully and easily reproduced from the sources and scripts provided in this repository.
 
-![A KLayout screenshot of the Cloneless1 ASIC](layout.png)
+![A KLayout screenshot of the Cloneless1 ASIC](layout2.png)
 
 ## (Re-)Producing the Chip Design
 After cloning the repository (```git clone https://github.com/ThorbenMoos/Cloneless1```) and performing a short environment setup, (re-)producing the entire chip design with all its intermediate stages and files should be as easy as a single call to the Makefile. To have that work, make sure to install [ghdl](https://github.com/ghdl/ghdl), [iverilog (Icarus Verilog)](https://github.com/steveicarus/iverilog), the make utility and the [nix](https://github.com/NixOS/nix) package manager. On Ubuntu Server 24.04 LTS the following commands have been tested for installing these utilities:
