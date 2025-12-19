@@ -1,5 +1,5 @@
 # Cloneless1
-Cloneless1 is the first of a series of planned tamper-resistant cryptographic open-source silicon designs. It uses GlobalFoundries' 180nm open-source PDK [GF180MCU](https://gf180mcu-pdk.readthedocs.io/en/latest), the [wafer.space](https://wafer.space) [project template](https://github.com/wafer-space/gf180mcu-project-template) and has been submitted to the MPW shuttle [wafer.space GF180MCU Run 1](https://www.crowdsupply.com/wafer-space/gf180mcu-run-1) for fabrication. The Cloneless1 ASIC design has been created using the [librelane](https://librelane.readthedocs.io/en/latest) EDA tool flow and can be fully and easily reproduced from the sources and scripts provided in this repository.
+Cloneless1 is the first in a series of planned tamper-resistant cryptographic open-source silicon designs. It uses GlobalFoundries' 180nm open-source PDK [GF180MCU](https://gf180mcu-pdk.readthedocs.io/en/latest), the [wafer.space](https://wafer.space) [project template](https://github.com/wafer-space/gf180mcu-project-template) and has been submitted to the MPW shuttle [wafer.space GF180MCU Run 1](https://www.crowdsupply.com/wafer-space/gf180mcu-run-1) for fabrication. The Cloneless1 ASIC has been designed using the [librelane](https://librelane.readthedocs.io/en/latest) EDA tool flow and can be fully and easily reproduced from the sources and scripts provided in this repository.
 
 ![A KLayout screenshot of the Cloneless1 ASIC](layout.png)
 
@@ -17,10 +17,14 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 "
 ```
 
-Once these steps are completed, a new terminal needs to be opened and ```nix-shell``` can be called in the main directory of this repository. Inside the shell simply call ```make``` and wait for the results (using a machine with at least 32 GB memory recommended). The Makefile verifies testbenches, converts the sources, clones the PDK and executes the librelane flow, first to pre-harden some macros and then to implement the overall chip design. With the provided configuration, the overall runtime will be more than 7 hours on most machines. The GDS is usually ready after 3-4 hours (the remaining time is for sign-off steps).
+Once these steps are completed, a new terminal needs to be opened and ```nix-shell``` can be called in the main directory of this repository. Inside the shell simply call ```make``` and wait for the results (using a machine with at least 32 GB memory is recommended). The Makefile verifies testbenches, converts the sources, clones the PDK and executes the librelane flow, first to pre-harden some macros and then to implement the overall chip design. With the provided configuration, the overall runtime will be more than 8 hours on most machines. The GDS is usually ready after 3-4 hours (after fill insertion), the remaining time is for sign-off steps. If everything goes well the design should pass all Antenna, DRC and LVS checks and the produced GDS should have the following hashes:
+
+md5sum: 0545febbda0f2e6065ca045db22bff07  
+shasum: 6e4dae35adf046a774b3f1f03f6dcd72c6e71f5a  
+sha256sum: 0894d1cf54045aa2bb673c368a5e4bb5716523ebdd55ada8d1f61ecbb73f4b3f
 
 ## RTL Design
-The RTL design is fully written in VHDL (my preferred hardware description language), all sources are located in the `src` folder. Many high-level modules make use of generics to keep the designs parametrizable beyond their concrete instantiation in this project. Conversion from VHDL to Verilog for compatibility with the EDA tool is performed with ghdl.
+The RTL design is fully written in VHDL, all sources are located in the ```src``` folder. Many high-level modules make use of generics to keep the designs parametrizable and useful beyond their concrete instantiation in this project. Conversion from VHDL to Verilog for compatibility with the EDA tool is performed with ghdl.
 
 ## Science and Cryptography
 The Cloneless1 design implements and/or leverages the following scientific results and cryptographic primitives:
@@ -29,10 +33,10 @@ The Cloneless1 design implements and/or leverages the following scientific resul
 - Inner-product masking over a Mersenne prime field, combining results of [3], [4] and [5] for both side-channel and fault resistance.
 - Duplication with redundant error checks for fault resistance.
 - The Edge-Sampling based True Random Number Generator (ES-TRNG) [6] for seed generation.
-- The Trivium stream cipher [7] for concurrent pseudo-randomness generation from the initial seed for the masking scheme as recommended in [8].
+- The Trivium stream cipher [7] for concurrent pseudo-randomness generation from the initial seed as recommended in [8].
 - A Ring-Oscillator based Physically Unclonable Function (RO-PUF) first introduced in [9] to generate private key material.
 
-The mid-pSquare implementation uses two share and two redundancy domains. Raw outputs of some exemplary TRNG and PUF designs with different parametrization are accessible via the framework. Error-corrected TRNG and PUF outputs used for key and randomness generation of the block cipher are not accessible via the interface.
+The mid-pSquare cipher implementation uses two shares and two redundancy domains. Raw outputs of some exemplary TRNG and PUF designs with different parametrization are accessible via the framework. Error-corrected TRNG and PUF outputs used for key and randomness generation of the block cipher are not accessible via the interface.
 
 [1]: https://doi.org/10.46586/tches.v2025.i4.486-519, https://github.com/uclcrypto/mid-pSquare  
 [2]: https://doi.org/10.1007/978-3-031-58734-4_7, https://github.com/uclcrypto/small-pSquare  
