@@ -42,7 +42,7 @@ The mid-pSquare cipher implementation uses two shares and two redundancy domains
 [2]: https://doi.org/10.1007/978-3-031-58734-4_7, https://github.com/uclcrypto/small-pSquare  
 [3]: https://doi.org/10.1007/978-3-031-30634-1_20  
 [4]: https://doi.org/10.46586/tches.v2024.i4.690-736  
-[5]: https://eprint.iacr.org/2025/337  
+[5]: https://doi.org/10.1007/978-981-95-5096-8_17  
 [6]: https://doi.org/10.13154/tches.v2018.i3.267-292  
 [7]: https://doi.org/10.1007/11836810_13  
 [8]: https://doi.org/10.62056/akdkp2fgx, https://github.com/uclcrypto/randomness_for_hardware_masking  
