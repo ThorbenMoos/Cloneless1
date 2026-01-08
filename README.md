@@ -55,6 +55,6 @@ The Cloneless1 chip encrypts plaintexts with the mid-pSquare block cipher and ou
 This is our first attempt at building a tamper-resistant cryptographic ASIC using fully open-source EDA tools and PDKs only. While the cryptography, science and high-level design principles should be sound (see the referenced peer-reviewed articles), it is possible, even likely, that the low-level implementation contains flaws that will affect the functionality and/or intended security properties. The plan is to discover such mistakes, report them and learn from them in the open, instead of behind closed doors as typically done in cryptographic IC design. As is, the design is not concretely useful beyond research purposes, as the chip aims at experimental verification of the physical security properties instead of providing full end-to-end security. The design and documentation target research-level quality and [TRL](https://en.wikipedia.org/wiki/Technology_readiness_level) 3.
 
 ## Citing
-To reference the current release in academic publications you may use the following DOI link, which lets you generate respective citations in common formats.
+To reference the current release in academic publications you may use the following DOI link. It can be used to generate citations in common formats.
 
 [![DOI](https://zenodo.org/badge/1118386248.svg)](https://doi.org/10.5281/zenodo.18184084)
