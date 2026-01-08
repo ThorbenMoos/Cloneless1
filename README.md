@@ -51,3 +51,19 @@ The mid-pSquare cipher implementation uses two shares and two redundancy domains
 
 ## Disclaimer
 This is our first attempt at building a tamper-resistant cryptographic ASIC using fully open-source EDA tools and PDKs only. While the cryptography, science and high-level design principles should be sound (see the referenced peer-reviewed articles), it is possible, even likely, that the low-level implementation contains flaws that will affect the functionality and/or intended security properties. The plan is to discover such mistakes, report them and learn from them in the open, instead of behind closed doors as typically done in cryptographic IC design. As is, the design is not concretely useful beyond research purposes, as the chip aims at experimental verification of the physical security properties instead of providing full end-to-end security. The design and documentation target research-level quality and [TRL](https://en.wikipedia.org/wiki/Technology_readiness_level) 3.
+
+## Citing this Repository
+To reference this repository in academic publications you may use the following bibtex citation.
+
+```
+@software{cloneless1,
+  author       = {Thorben Moos},
+  title        = {Cloneless1},
+  month        = jan,
+  year         = 2026,
+  publisher    = {Zenodo},
+  version      = {v1},
+  doi          = {10.5281/zenodo.18184085},
+  url          = {https://doi.org/10.5281/zenodo.18184085},
+}
+```
