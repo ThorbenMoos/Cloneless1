@@ -17,11 +17,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 "
 ```
 
-Once these steps are completed, a new terminal needs to be opened and ```nix-shell``` can be called in the main directory of this repository. Inside the shell simply call ```make``` and wait for the results (using a machine with at least 32 GB memory is recommended). The Makefile verifies testbenches, converts the sources, clones the PDK and executes the librelane flow, first to pre-harden some macros and then to implement the overall chip design. With the provided configuration, the overall runtime will be more than 8 hours on most machines. The GDS is usually ready after 3-4 hours (after fill insertion), the remaining time is for sign-off steps. If everything goes well the design should pass all Antenna, DRC and LVS checks and the produced GDS should have the following hashes:
-
-md5sum: 0545febbda0f2e6065ca045db22bff07  
-shasum: 6e4dae35adf046a774b3f1f03f6dcd72c6e71f5a  
-sha256sum: 0894d1cf54045aa2bb673c368a5e4bb5716523ebdd55ada8d1f61ecbb73f4b3f
+Once these steps are completed, a new terminal needs to be opened and ```nix-shell``` can be called in the main directory of this repository. Inside the shell simply call ```make``` and wait for the results (using a machine with at least 32 GB memory is recommended). The Makefile verifies testbenches, converts the sources, clones the PDK and executes the librelane flow, first to pre-harden some macros and then to implement the overall chip design. With the provided configuration, the overall runtime will be more than 8 hours on most machines. The GDS is usually ready after 3-4 hours (after fill insertion), the remaining time is for sign-off steps. If everything goes well the design should pass all Antenna, DRC and LVS checks.
 
 ## RTL Design
 The RTL design is fully written in VHDL, all sources are located in the ```src``` folder. Many high-level modules make use of generics to keep the designs parametrizable and useful beyond their concrete instantiation in this project. Conversion from VHDL to Verilog for compatibility with the EDA tool is performed with ghdl.
