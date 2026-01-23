@@ -72,6 +72,7 @@
           docopt
           
           # For logo generation
+		  qrcode
           pillow
         ];
       }) {};
