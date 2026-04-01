@@ -21,7 +21,7 @@ Once these steps are completed, a new terminal needs to be opened and ```nix-she
 
 **Bugfix (23.01.26)**: There was a small reproducibility error which has now been fixed. Running KLayout DRC within the initial chip flow led to (minor) changes in the GDS that were not present in the submitted file (and even caused an Antenna error). The updated flow skips this step in the initial flow and instead performs the full [wafer.space precheck](https://github.com/wafer-space/gf180mcu-precheck/tree/main) afterwards to produce exactly the foundry-submitted GDS (verified through KLayout Diff/XOR).
 
-You may download the original [GDS](https://thorbenmoos.de/Cloneless1.gds.zip) and [postlayout netlist](https://thorbenmoos.de/Cloneless1.nl.v.zip) here to compare your results against. While regular hashes/checksums are expected to differ (due to timestamps and other artifacts), KLayout Diff/XOR should report no differences.
+You may download the original [GDS](https://thorbenmoos.de/Cloneless1.gds.zip) (zip, 59 MB) and [postlayout netlist](https://thorbenmoos.de/Cloneless1.nl.v.zip) (zip, 6 MB) here to compare your results against. While regular hashes/checksums are expected to differ (due to timestamps and other artifacts), KLayout Diff/XOR should report no differences.
 
 ## RTL Design
 The RTL design is fully written in VHDL, all sources are located in the ```src``` folder. Many high-level modules make use of generics to keep the designs parametrizable and useful beyond their concrete instantiation in this project. Conversion from VHDL to Verilog for compatibility with the EDA tool is performed with ghdl.

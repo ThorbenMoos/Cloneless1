@@ -28,12 +28,6 @@ architecture Behavioral of SQ_dSHARE_IPM is
                b : in UNSIGNED (bits-1 downto 0);
                c : out UNSIGNED (bits-1 downto 0));
     end component;
-                   
-    component SquModMersenne is
-        Generic (bits : INTEGER := 7);
-        Port ( a : in UNSIGNED (bits-1 downto 0);
-              b : out UNSIGNED (bits-1 downto 0));
-    end component;
     
     component MulModMersenne is
         Generic ( bits : INTEGER := 7);
