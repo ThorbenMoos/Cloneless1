@@ -1,5 +1,14 @@
 # Cloneless1
-Cloneless1 is the first in a series of planned tamper-resistant cryptographic open-source silicon designs. It uses GlobalFoundries' 180nm open-source PDK [GF180MCU](https://gf180mcu-pdk.readthedocs.io/en/latest), the [wafer.space](https://wafer.space) [project template](https://github.com/wafer-space/gf180mcu-project-template) and has been submitted to the MPW shuttle [wafer.space GF180MCU Run 1](https://www.crowdsupply.com/wafer-space/gf180mcu-run-1) for fabrication. The Cloneless1 ASIC has been designed using the [librelane](https://librelane.readthedocs.io/en/latest) EDA tool flow and can be fully and easily reproduced from the sources and scripts provided in this repository.
+Cloneless1 is the first in a series of planned tamper-resistant cryptographic open-source silicon designs. It uses GlobalFoundries' 180nm open-source PDK [GF180MCU](https://gf180mcu-pdk.readthedocs.io/en/latest), the [wafer.space](https://wafer.space) [project template](https://github.com/wafer-space/gf180mcu-project-template) and has been manufactured via [wafer.space GF180MCU Run 1](https://www.crowdsupply.com/wafer-space/gf180mcu-run-1) for fabrication. The Cloneless1 ASIC has been designed using the [librelane](https://librelane.readthedocs.io/en/latest) EDA tool flow and can be fully and easily reproduced from the sources and scripts provided in this repository.
+
+## News (as of 25.06.26)
+- The Cloneless1 chips have been successfully manufactured, delivered and tested.
+- Open-source PCB designs, FPGA controllers, verification collateral and software artifacts are available in the [Cloneless_artifacts](https://github.com/ThorbenMoos/Cloneless_artifacts) repository.
+- The protected block cipher implementation of Cloneless1 has been successfully evaluated against 100 million power traces.
+- The TRNG and PUF implementations all work in principle, but require further testing across many samples.
+- In short, most PUF configurations look decent for a first attempt in this node, most TRNG configurations need more tuning.
+- Cloneless2 is already in development and will be part of [wafer.space GF180MCU Run 2](https://www.crowdsupply.com/wafer-space/gf180mcu-run-2).
+- More details are coming soon.
 
 ![A KLayout screenshot of the Cloneless1 ASIC](layout.png)
 
@@ -62,4 +71,4 @@ To reference the current release in academic publications you may use the follow
 [![DOI](https://zenodo.org/badge/1118386248.svg)](https://doi.org/10.5281/zenodo.18184084)
 
 ## Acknowledgement
-This work has been supported by Project SOVereign at the [PBS Foundation](https://pbs.foundation).
+This work has been supported by the [PBS Foundation](https://pbs.foundation) via Project SOVereign.
