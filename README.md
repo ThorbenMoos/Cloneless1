@@ -1,6 +1,12 @@
 # Cloneless1
 Cloneless1 is the first in a series of planned tamper-resistant cryptographic open-source silicon designs. It uses GlobalFoundries' 180nm open-source PDK [GF180MCU](https://gf180mcu-pdk.readthedocs.io/en/latest), the [wafer.space](https://wafer.space) [project template](https://github.com/wafer-space/gf180mcu-project-template) and has been manufactured via [wafer.space GF180MCU Run 1](https://www.crowdsupply.com/wafer-space/gf180mcu-run-1). The Cloneless1 ASIC has been designed using the [librelane](https://librelane.readthedocs.io/en/latest) EDA tool flow and can be fully and easily reproduced from the sources and scripts provided in this repository.
 
+## News (as of 27.07.26)
+- (!) The [Cloneless2](https://github.com/ThorbenMoos/Cloneless2) design is final and its repository is public.
+- Cloneless2 is currently being manufactured via [wafer.space GF180MCU Run 2](https://www.crowdsupply.com/wafer-space/gf180mcu-run-2) and brings several novelties compared to Cloneless1.
+- The physical security evaluation and characterization efforts on the Cloneless1 silicon are progressing well.
+- More details are coming soon.
+
 ## News (as of 25.06.26)
 - The Cloneless1 chips have been successfully manufactured, delivered and tested.
 - Open-source PCB designs, FPGA controllers, verification collateral and software artifacts are available in the [Cloneless_artifacts](https://github.com/ThorbenMoos/Cloneless_artifacts) repository.
