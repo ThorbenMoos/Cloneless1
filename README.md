@@ -6,7 +6,7 @@ Important external links:
 - [Cloneless2](https://github.com/ThorbenMoos/Cloneless2)  
 
 ## News (as of 27.07.26)
-- (!) The [Cloneless2](https://github.com/ThorbenMoos/Cloneless2) design is final publicly available.
+- (!) The [Cloneless2](https://github.com/ThorbenMoos/Cloneless2) design is final and publicly available.
 - Cloneless2 is currently being manufactured via [wafer.space GF180MCU Run 2](https://www.crowdsupply.com/wafer-space/gf180mcu-run-2) and brings several novelties compared to Cloneless1.
 - The physical security evaluation and characterization efforts of the Cloneless1 silicon are progressing well.
 - More details are coming soon.
