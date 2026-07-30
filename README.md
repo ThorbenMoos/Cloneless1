@@ -3,7 +3,7 @@ Cloneless1 is the first in a series of planned tamper-resistant cryptographic op
 
 Important external links:
 - [Cloneless_artifacts](https://github.com/ThorbenMoos/Cloneless_artifacts)
-- [Cloneless2](https://github.com/ThorbenMoos/Cloneless2)  
+- [Cloneless2](https://github.com/ThorbenMoos/Cloneless2)
 
 ## News (as of 27.07.26)
 - (!) The [Cloneless2](https://github.com/ThorbenMoos/Cloneless2) design is final and publicly available.
